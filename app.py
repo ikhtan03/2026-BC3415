@@ -2,6 +2,11 @@
 
 from flask import Flask, render_template, request
 import joblib
+from groq import Groq
+import os
+
+# line for the groq api key
+client = Groq()
 
 modelPKL = joblib.load("DBS_SingDollar.pkl")
 
@@ -23,6 +28,10 @@ def main():
 def dbs():
     return(render_template("dbs.html"))
 
+@app.route("/chatbot",methods=["GET","POST"])
+def chatbot():
+    return(render_template("chatbot.html"))
+
 @app.route("/DBSresult",methods=["GET","POST"])
 def DBSresult():
     q = float(request.form.get("q")) # front end is q?? back end r?; cast it as float
@@ -31,6 +40,19 @@ def DBSresult():
     print(r)
     return(render_template("DBSresult.html", r=r))
      #first r is front, second r is back end
+
+@app.route("/chatbotReply",methods=["GET","POST"])
+def chatbotReply():
+    q = request.form.get("q")
+    r = client.chat.completions.create(
+        model = "openai/gpt-oss-120b",
+        messages = [ {"role":"user", "content": "q"} ]
+    )
+
+    print(r.choices[0].message.content)
+
+    print(r)
+    return(render_template("chatbotReply.html", r=r))
 
 if __name__ == "__main__":
     app.run(port=5320)
