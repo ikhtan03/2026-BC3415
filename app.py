@@ -6,6 +6,7 @@ from groq import Groq
 import os
 
 # line for the groq api key
+
 client = Groq()
 
 modelPKL = joblib.load("DBS_SingDollar.pkl")
@@ -49,10 +50,8 @@ def chatbotReply():
         messages = [ {"role":"user", "content": "q"} ]
     )
 
-    print(r.choices[0].message.content)
-
-    print(r)
-    return(render_template("chatbotReply.html", r=r))
+    
+    return(render_template("chatbotReply.html", r=r.choices[0].message.content))
 
 if __name__ == "__main__":
     app.run(port=5320)
